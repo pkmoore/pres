@@ -11,8 +11,138 @@
 \end{frame}
 
 
-\begin{frame}{First Slide}
-  First slide contents
+\begin{frame}{Environments}
+  \begin{itemize}
+  \item{Programs don't execute in isolation}
+  \item{They operate on the inputs they are provided}
+    \begin{itemize}
+    \item{\textit{We are really good at testing by manipulating inputs!}}
+    \end{itemize}
+  \item{\textit{In the context of the environment they are executing in}}
+  \end{itemize}
 \end{frame}
+
+
+\begin{frame}{How Can Environments Differ}
+  \begin{itemize}
+  \item{Hardware the application is running on}
+  \item{Conditions on the network the application relies on}
+  \item{Differing versions of libraries and software dependences}
+  \item{Differences in Operating System State}
+    \begin{itemize}
+    \item{\textit{e.g.\ filesystem state}}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Different Environments Reveal Different Bugs!}
+  \begin{itemize}
+  \item{An application may fail if a file it depends on isn't present}
+  \item{An application may fail if the filesystem isn't configured as
+      expected}
+  \item{An application may fail if the network performs differently than expected}
+  \item{These bugs are hard to find because setting up different environments is
+      expensive}
+  \item{Weird environmental conditions may be uncommon so developers don't
+      know that they need to handle them!}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{The Cost!}
+  \begin{itemize}
+  \item{Applications are often tested under ideal conditions}
+  \item{These bugs often will not present themselves until an application has
+      been deployed to the weird environment in question}
+  \item{What is needed is a way to test how applications will respond when they
+      encounter weird environmental conditions \textbf{BEFORE} they make it to
+      go through a real world deployment}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{CrashSimulator}
+  \begin{itemize}
+  \item{CrashSimulator is a set of techniques and a tool for:}
+    \begin{itemize}
+    \item{Generically capturing and encoding weird environmental conditions}
+    \item{Injecting these conditions into an execution of an application under
+        test}
+    \item{Making an assessment about whether the application handled the
+        weird behavior correctly or not}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{The Key Idea}
+  \begin{itemize}
+  \item{In a modern setup, an application interacts with its environment
+      through the operating system}
+  \item{This is accomplished through system calls}
+  \item{The results of these system calls represent weird environmental conditions}
+  \item{e.g. Poor network performance may involve network-related system
+      calls timing out}
+  \item{Weird filesystem issue may result in filesystem-related system
+      calls failing or returning weird results}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{The Process}
+  \begin{itemize}
+  \item{Record system call trace of application running in anomalous
+      environment}
+  \item{Analyze system call trace to identify system call results are
+      indicative of the anomalous conditions}
+  \item{Influence execution of application under test such that it experiences
+      the identified anomalous system call results}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Injecting Behavior into an Execution}
+  \begin{itemize}
+  \item{Record trace of application under test}
+  \item{Perturb trace so it now contains anomalous system call results}
+    \begin{itemize}
+    \item{Some mutations can be done programmatically}
+    \item{Some mutations require manual effort (at this time)}
+    \end{itemize}
+  \item{Replay execution of application using mutated trace}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Replaying a System Call Trace}
+  \begin{itemize}
+  \item{Execute application}
+  \item{At every system call pause execution and modify registers and memory
+      to reflect values present for corresponding system call in trace}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Assessing Application's Response}
+  \begin{itemize}
+  \item{If an application changes its system call behavior, replay diverges it may
+      be trying to handle the anomalous behavior}
+    \begin{itemize}
+    \item{\textit{possibly correct behavior}}
+    \end{itemize}
+  \item{If an application does not change its system call behavior, replay
+      continues}
+    \begin{itemize}
+    \item{\textit{Application has not made an effort to handle anomalous conditions}}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Results...}
+...
+\end{frame}
+
 
 \end{document}
