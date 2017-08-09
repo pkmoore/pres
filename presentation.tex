@@ -1,7 +1,7 @@
 \documentclass[pdf]{beamer}
 \usepackage{pifont}
 \mode<presentation>{}
-\title{Quals Presentation}
+\title{Identifying Environment Related Faults with CrashSimulator}
 \subtitle{The Subtitle}
 \author{Preston Moore}
 \begin{document}
@@ -14,52 +14,66 @@
 
 \begin{frame}{Environments}
   \begin{itemize}
-  \item{Programs don't execute in isolation}
-  \item{They operate on the inputs they are provided}
+  \item{Programs do not execute in isolation}
+  \item{Instead, they operate:}
     \begin{itemize}
-    \item{\textit{We are really good at testing by manipulating inputs!}}
+    \item{On the inputs they are provided}
+    \item{\textit{In the context of the environment they are executing in}}
+    \item{We are really good at testing by manipulating inputs!}
     \end{itemize}
-  \item{\textit{In the context of the environment they are executing in}}
   \end{itemize}
+\end{frame}
+
+
+\begin{frame}{What is an Environment?}
+  \begin{itemize}
+  \item{An application's environment provides:}
+  \item{An implicit input in the form of environment variables, file
+      contents, and other data accessible by the application}
+  \item{An implementation of executable resources an application depends upon}
+    \begin{itemize}
+    \item{e.g. libraries, callable OS functions}
+    \end{itemize}
+\end{itemize}
 \end{frame}
 
 
 \begin{frame}{How Can Environments Differ}
   \begin{itemize}
-  \item{Hardware the application is running on}
-  \item{Conditions on the network the application relies on}
   \item{Differing versions of libraries and software dependences}
-  \item{Differences in Operating System State}
+  \item{Condition of the network on which the application relies}
+  \item{Operating system states, which can vary}
     \begin{itemize}
-    \item{\textit{e.g.\ filesystem state}}
+    \item{\textit{e.g.\ filesystem state, environment variable values}}
     \end{itemize}
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Different Environments Reveal Different Bugs!}
-  % Define the term environmental bugs here
+\begin{frame}{Environmental Variations Can Reveal Bugs!}
   \begin{itemize}
-  \item{An application may fail if a file it depends on isn't present}
-  \item{An application may fail if the filesystem isn't configured as
-      expected}
-  \item{An application may fail if the network performs differently than expected}
+  \item{An application may fail if it doesn't handle a file it needs being missing}
+  \item{An application may fail if it doesn't handle unusual filesystem configurations}
+  \item{An application may fail if it doesn't handle possible network
+      performance issues}
+  \item{Failure to deal with these conditions results in incorrect behavior ---
+      i.e.\ bugs}
   \item{These bugs are hard to find because setting up different environments is
       expensive}
-  \item{Weird environmental conditions may be uncommon so developers don't
-      know that they need to handle them!}
+  %\item{Weird environmental conditions may be uncommon so developers do not
+  %    know that they need to handle them!}
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{The Cost!}
+\begin{frame}{The Typical Scenario}
   \begin{itemize}
-  \item{Applications are often tested under ideal conditions}
-  \item{These bugs often will not present themselves until an application has
-      been deployed to the weird environment in question}
-  \item{What is needed is a way to test how applications will respond when they
-      encounter weird environmental conditions \textbf{BEFORE} they make it to
-      go through a real world deployment}
+  \item{Applications are tested under ideal conditions}
+  \item{These bugs do not present themselves until an application has
+      been deployed to some other environment}
+  \item{Bugs must be diagnosed, fixes must be created, and distributed}
+  \item{What is needed is a way to test how applications reactions to particular
+      environmental conditions \textbf{BEFORE} they are deployed}
   \end{itemize}
 \end{frame}
 
@@ -68,7 +82,7 @@
   \begin{itemize}
   \item{CrashSimulator is a set of techniques and a tool for:}
     \begin{itemize}
-    \item{Generically capturing and encoding weird environmental conditions}
+    \item{Generically capturing and encoding unusual environmental conditions}
     \item{Injecting these conditions into an execution of an application under
         test}
     \item{Making an assessment about whether the application handled the
@@ -81,12 +95,10 @@
 \begin{frame}{The Key Idea}
   \begin{itemize}
   \item{In a modern setup, an application interacts with its environment
-      through the operating system}
-  \item{This is accomplished through system calls}
+      through the operating system through system calls}
   \item{The results of these system calls represent weird environmental conditions}
   \item{e.g. Poor network performance may involve network-related system
-      calls timing out}
-  \item{Weird filesystem issue may result in filesystem-related system
+      calls timing out, filesystem issues may result in filesystem-related system
       calls failing or returning weird results}
   \end{itemize}
 \end{frame}
@@ -96,15 +108,15 @@
   \begin{itemize}
   \item{Record system call trace of application running in anomalous
       environment}
-  \item{Analyze system call trace to identify system call results are
-      indicative of the anomalous conditions}
-  \item{Influence execution of application under test such that it experiences
-      the identified anomalous system call results}
+  \item{Analyze the trace to identify system call results are
+      indicative of the environment's anomalous conditions}
+  \item{Inject the results into an execution of the application being tested}
+  \item{Assess how the application responds}
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Injecting Behavior into an Execution}
+\begin{frame}{Injecting Anomalous System Call Results into an Execution}
   \begin{itemize}
   \item{Record trace of application under test}
   \item{Perturb trace so it now contains anomalous system call results}
@@ -128,7 +140,7 @@
       ourselves}
     \begin{itemize}
     \item{All ``simple'' system calls}
-    \item{All system calls involving file descriptors that don't really exist}
+    \item{All system calls involving file descriptors that do not really exist}
       \begin{itemize}
       \item{That is, file descriptors produced from system calls that we
           previously intercepted and handled}
@@ -142,13 +154,23 @@
 \end{frame}
 
 
-\begin{frame}{Replaying a System Call: When That Doesn't Work}
+\begin{frame}{Replaying a System Call: When That Does Not Work}
   \begin{itemize}
   \item{The effects of some system calls are too complex to deal with}
     \begin{itemize}
     \item{e.g.\ mmap()}
     \end{itemize}
-  \item{In this case we allow them to be executed natively}
+  \item{In this case we allow them to be executed natively by:}
+    \begin{itemize}
+      \item{Instructing ptrace to allow the application to execute until the
+          next system call}
+      \item{Checking upcoming system call to ensure it matches the corresponding
+          line from the trace being replayed}
+      \item{Restarting execution of the application thereby allowing it to
+          actually make a real system call}
+      \item{Checking the results to ensure they too match the results from the
+          corresponding line in the trace being replayed}
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
@@ -157,7 +179,8 @@
   \begin{itemize}
   \item{Execute application}
   \item{Use Linux's Ptrace facilities to interrupt execution at every system
-      call in order to perform the previous steps}
+      call}
+  \item{Adjust program state to match contents of system call trace}
   \item{Because replay process ensures system calls respond the same way as they
       did when the trace was recorded, the application will follow the same
       execution}
@@ -165,12 +188,13 @@
 \end{frame}
 
 
-\begin{frame}{Assessing Application's Response}
+\begin{frame}{Assessing the Response of an Application}
   \begin{itemize}
-  \item{If an application changes its system call behavior, replay diverges it may
-      be trying to handle the anomalous behavior}
+  \item{If an application changes its system call behavior the replay diverges,
+      i.e. execution no longer matches the trace}
+  \item{This means the application may be trying to handle the anomalous behavior}
     \begin{itemize}
-    \item{\textit{possibly correct behavior}}
+    \item{\textit{Possibly correct behavior}}
     \end{itemize}
   \item{If an application does not change its system call behavior, replay
       continues}
@@ -181,7 +205,7 @@
 \end{frame}
 
 
-\begin{frame}{PoC Implementation}
+\begin{frame}{Proof of Concept Implementation}
   \begin{itemize}
   \item{Implementation on 32-bit Linux}
   \item{Python Orchestration: Keep Trace and Execution in Sync}
@@ -238,10 +262,15 @@
         readlink    & Link being evaluated       & \textbf{N/A} & & & & & & \\
         unlink      & File being unlinked        & \textbf{N/A} & & & & & & \\
     \end{tabular}
+    \begin{itemize}
+    \item{\ding{104} --- Unmodified value}
+    \item{\ding{55} --- Application fails to recognize condition}
+    \item{\ding{51} --- Application recognizes condition}
+    \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Cross-Disk File Movement}
+\begin{frame}{Cross-Disk File Movement Discussion}
   \begin{itemize}
   \item{Moving a file around on the same disk is trivial: rename() system
       call}
@@ -256,23 +285,37 @@
     \item{Race conditions}
     \item{Filling of disk space}
     \end{itemize}
+  \item{Race condition in Python's shutil}
+  \item{Loss of extended file attributes in Rust's std::fs}
+  \item{Fill disk space bug in C++'s Boost::filesystem}
   \end{itemize}
-\item{Race condition in Python's shutil}
-\item{Loss of extended file attributes in Rust's std::fs}
-\item{Fill disk space bug in C++'s Boost::filesystem}
 \end{frame}
 
 
-\begin{frame}{Cross-Disk Move Bugs}
+\begin{frame}{Cross-Disk File Movement Results}
 Put table in here
 \end{frame}
 
 
-\begin{frame}{Extremely Long Network Timeouts}
-  \item{
-  Discuss applications with outrageous timeouts
-  Describe situation where this could be bad
-  \item{Slowloris attack against web servers}
+\begin{frame}{Extremely Long Network Timeouts Discussion}
+  \begin{itemize}
+  \item{Applications that do not configure reasonable timeouts are vulnerable
+      to a malicious communication participant dragging communication out over a
+      long period of time}
+  \item{This process ties up resources and greatly lowers the effort required to
+      consume all available resources preventing legitimate access}
+  \item{``Slowloris'' Denial of Service attack against http servers}
+    \begin{itemize}
+    \item{involved keeping a connection open to a vulnerable server by
+        introducing just-below-the-timeout delays between sending HTTP headers}
+        \end{itemize}
+  \item{MANY Python HTTP/HTTPS/web modules vulnerable}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Extremely Long Network Timeouts Results}
+Put table here
 \end{frame}
 
 
