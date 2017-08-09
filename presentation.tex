@@ -130,7 +130,14 @@
 
 
 \begin{frame}{An Example}
-  ...
+  \begin{itemize}
+  \item{Consider an application that depends on reading from file F}
+  \item{Normal open: open(F) = 3}
+  \item{Consider this application running in an environment where F is absent}
+  \item{File is missing: open(F) = -1 ENOENT
+  \item{For any open call, modify return value to -1 ENOENT to simulate the
+      target file being absent}
+  \end{itemize}
 \end{frame}
 
 
@@ -293,7 +300,23 @@
 
 
 \begin{frame}{Cross-Disk File Movement Results}
-Put table in here
+  \tiny{}
+    \begin{tabular}{l p{1cm} p{1cm} p{1.2cm} p{1cm}}
+        Application     & Source Replaced & Preserve Xattrs & Preserve Timestamps & Copying Devices\\
+\hline
+        mv              & Correct             & Correct         & Correct             & Correct\\
+        mmv             & Correct             & {\bf Sec. Flaw} & {\bf Time
+Loss} & Correct\\
+        install         & Correct             & {\bf Sec. Flaw} & {\bf Time
+Loss} & {\bf Fill Disk} \\
+        perl File::Copy & Correct             & {\bf Sec. Flaw} & {\bf Time
+Loss} & {\bf Fill Disk} \\
+        shutils         & {\bf Corrupt}	& {\bf Sec. Flaw} 	& Correct             & Correct\\
+        rust            & Correct             & {\bf Sec. Flaw} & {\bf Time
+Loss} & {\bf Fill Disk} \\
+        boost::copyfile & {\bf Corrupt}	      & {\bf Sec. Flaw} & {\bf Time
+Loss} & {\bf Fill Disk} \\
+    \end{tabular}
 \end{frame}
 
 
@@ -315,7 +338,20 @@ Put table in here
 
 
 \begin{frame}{Extremely Long Network Timeouts Results}
-Put table here
+  \tiny{}
+  \begin{tabular}{l | l}
+    {\bf Application}              & {\bf Analysis Result}\\
+    wget                     & Overly long timeout supplied to {\tt select()}, vulnerable\\
+    ftp                      & No {\tt poll()} or {\tt select()}, no timeout set, vulnerable\\
+    telnet                   & {\tt select()} specifies no timeout, vulnerable\\
+    urllib http              & No {\tt poll()} or {\tt select()}, no timeout set, vulnerable\\
+    urllib ftp               & No {\tt poll()} or {\tt select()}, no timeout set, vulnerable\\
+    ftplib                   & No {\tt poll()} or {\tt select()}, no timeout set, vulnerable\\
+    httplib                  & No {\tt poll()} or {\tt select()}, no timeout set, vulnerable\\
+    requests                 & No {\tt poll()} or {\tt select()}, no timeout set, vulnerable\\
+    urllib3                  & No {\tt poll()} or {\tt select()}, no timeout set, vulnerable\\
+    python-websocket-client  & No {\tt poll()} or {\tt select()}, no timeout set, vulnerable\\
+  \end{tabular}
 \end{frame}
 
 
