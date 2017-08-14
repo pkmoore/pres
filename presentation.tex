@@ -30,15 +30,15 @@
 
 
 \begin{frame}{What Does an Application's Environment Provide}
-  \begin{itemize}
   An application's environment provides:
+  \begin{itemize}
   \item{An implicit input in the form of environment variables, file
       contents, and other data accessible by the application}
   \item{An implementation of executable resources an application depends upon}
     \begin{itemize}
     \item{e.g. libraries, callable OS functions}
     \end{itemize}
-\end{itemize}
+  \end{itemize}
 \end{frame}
 
 
@@ -61,13 +61,13 @@
   \item{An application may fail if it does not handle possible network
       performance issues}
 
-    Failure to deal with these conditions results in incorrect behavior --- i.e.\ bugs.
+    % \item{Weird environmental conditions may be uncommon so developers do not
+    %   know that they need to handle them!}
+      \end{itemize}
+      Failure to deal with these conditions results in incorrect behavior --- i.e.\ bugs.
 
-    These bugs are hard to find because setting up different environments is
-    expensive.
-  %\item{Weird environmental conditions may be uncommon so developers do not
-  %    know that they need to handle them!}
-  \end{itemize}
+      These bugs are hard to find because setting up different environments is
+      expensive.
 \end{frame}
 
 
