@@ -12,22 +12,26 @@
 \end{frame}
 
 
-\begin{frame}{Environments}
+\begin{frame}{How do Environments Affect Execution}
   \begin{itemize}
   \item{Programs do not execute in isolation}
   \item{Instead, they operate:}
     \begin{itemize}
     \item{On the inputs they are provided}
-    \item{\textit{In the context of the environment they are executing in}}
-    \item{We are really good at testing by manipulating inputs!}
+    \item{\textit{In the context of the environment where they are executed}}
+    \item{Developers have become very good at testing applications by
+        manipulating inputs}
+      \begin{itemize}
+        \item{But environments affect execution as well}
+      \end{itemize}
     \end{itemize}
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{What is an Environment?}
+\begin{frame}{What Does an Application's Environment Provide}
   \begin{itemize}
-  \item{An application's environment provides:}
+  An application's environment provides:
   \item{An implicit input in the form of environment variables, file
       contents, and other data accessible by the application}
   \item{An implementation of executable resources an application depends upon}
@@ -38,7 +42,7 @@
 \end{frame}
 
 
-\begin{frame}{How Can Environments Differ}
+\begin{frame}{Environments Differ on Many Dimensions}
   \begin{itemize}
   \item{Differing versions of libraries and software dependences}
   \item{Condition of the network on which the application relies}
@@ -52,27 +56,28 @@
 
 \begin{frame}{Environmental Variations Can Reveal Bugs!}
   \begin{itemize}
-  \item{An application may fail if it doesn't handle a file it needs being missing}
-  \item{An application may fail if it doesn't handle unusual filesystem configurations}
-  \item{An application may fail if it doesn't handle possible network
+  \item{An application may fail if a file it needs is missing}
+  \item{An application may fail if it can not handle unusual filesystem configurations}
+  \item{An application may fail if it does not handle possible network
       performance issues}
-  \item{Failure to deal with these conditions results in incorrect behavior ---
-      i.e.\ bugs}
-  \item{These bugs are hard to find because setting up different environments is
-      expensive}
+
+    Failure to deal with these conditions results in incorrect behavior --- i.e.\ bugs.
+
+    These bugs are hard to find because setting up different environments is
+    expensive.
   %\item{Weird environmental conditions may be uncommon so developers do not
   %    know that they need to handle them!}
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{The Typical Scenario}
+\begin{frame}{The Typical Deployment Scenario}
   \begin{itemize}
   \item{Applications are tested under ideal conditions}
-  \item{These bugs do not present themselves until an application has
-      been deployed to some other environment}
-  \item{Bugs must be diagnosed, fixes must be created, and distributed}
-  \item{What is needed is a way to test how applications reactions to particular
+  \item{Bugs do not present themselves until an application has
+      been deployed to other, less controlled environments}
+  \item{Bugs must then be diagnosed and fixes must be created and distributed}
+  \item{What is needed is a way to test how applications react to particular
       environmental conditions \textbf{BEFORE} they are deployed}
   \end{itemize}
 \end{frame}
@@ -85,18 +90,18 @@
     \item{Generically capturing and encoding unusual environmental conditions}
     \item{Injecting these conditions into an execution of an application under
         test}
-    \item{Making an assessment about whether the application handled the
-        weird behavior correctly or not}
+    \item{Assessing whether the application handled the unusual condition correctly or not}
     \end{itemize}
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{The Key Idea}
+\begin{frame}{The Key Idea Behind CrashSimulator's Technique}
   \begin{itemize}
-  \item{In a modern setup, an application interacts with its environment
-      through the operating system through system calls}
-  \item{The results of these system calls represent weird environmental conditions}
+  \item{In Linux (and other operating systems), an application interacts with its environment
+      through system calls to the operating system}
+  \item{The idiosyncrasies in results of these system calls represent (and
+      result from) unusual environmental conditions}
   \item{e.g. Poor network performance may involve network-related system
       calls timing out, filesystem issues may result in filesystem-related system
       calls failing or returning weird results}
@@ -104,9 +109,9 @@
 \end{frame}
 
 
-\begin{frame}{The Process}
+\begin{frame}{Steps Required to Implement CrashSimulator's Technique}
   \begin{itemize}
-  \item{Record system call trace of application running in anomalous
+  \item{Record system call trace of application running in an anomalous
       environment}
   \item{Analyze the trace to identify system call results are
       indicative of the environment's anomalous conditions}
@@ -129,12 +134,20 @@
 \end{frame}
 
 
-\begin{frame}{An Example}
+\begin{frame}{An Example - Injecting the ``Absence'' of a File}
   \begin{itemize}
   \item{Consider an application that depends on reading from file F}
-  \item{Normal open: open(F) = 3}
+  \end{itemize}
+
+  Normal open: open(F) = 3
+
+  \begin{itemize}
   \item{Consider this application running in an environment where F is absent}
-  \item{File is missing: open(F) = -1 ENOENT
+  \end{itemize}
+
+  File is missing: open(F) = -1 ENOENT
+
+  \begin{itemize}
   \item{For any open call, modify return value to -1 ENOENT to simulate the
       target file being absent}
   \end{itemize}
@@ -143,8 +156,7 @@
 
 \begin{frame}{Replaying a System Call: The Ideal Case}
   \begin{itemize}
-  \item{Intercept the system call and handle its effects
-      ourselves}
+  \item{Intercept the system call and reproduce its results and side effects}
     \begin{itemize}
     \item{All ``simple'' system calls}
     \item{All system calls involving file descriptors that do not really exist}
@@ -161,7 +173,7 @@
 \end{frame}
 
 
-\begin{frame}{Replaying a System Call: When That Does Not Work}
+\begin{frame}{Replaying a System Call: When The Ideal Case Does Not Work}
   \begin{itemize}
   \item{The effects of some system calls are too complex to deal with}
     \begin{itemize}
@@ -212,11 +224,20 @@
 \end{frame}
 
 
-\begin{frame}{Proof of Concept Implementation}
+\begin{frame}{Proof of Concept Implementation of CrashSimulator}
+
+  Implementation Components:
+
   \begin{itemize}
-  \item{Implementation on 32-bit Linux}
-  \item{Python Orchestration: Keep Trace and Execution in Sync}
-  \item{C Interface: Ptrace and Structuring Data}
+  \item{32-bit Linux}
+  \item{Python Orchestration}
+    \begin{itemize}
+    \item{Keep Trace and Execution in Sync}
+    \end{itemize}
+  \item{C Python Module}
+    \begin{itemize}
+    \item{Ptrace and Structuring Data}
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
