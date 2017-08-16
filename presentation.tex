@@ -12,7 +12,7 @@
 \end{frame}
 
 
-\begin{frame}{How do Environments Affect Execution}
+\begin{frame}{How do Environments Affect Execution?}
   \begin{itemize}
   \item{Programs do not execute in isolation}
   \item{Instead, they operate:}
@@ -29,12 +29,11 @@
 \end{frame}
 
 
-\begin{frame}{What Does an Application's Environment Provide}
-  An application's environment provides:
+\begin{frame}{What Does an Application's Environment Provide?}
   \begin{itemize}
   \item{An implicit input in the form of environment variables, file
       contents, and other data accessible by the application}
-  \item{An implementation of executable resources an application depends upon}
+  \item{An implementation of the executable resources on which an application depends}
     \begin{itemize}
     \item{e.g. libraries, callable OS functions}
     \end{itemize}
@@ -42,9 +41,9 @@
 \end{frame}
 
 
-\begin{frame}{Environments Differ on Many Dimensions}
+\begin{frame}{Environments Differ on Many Levels}
   \begin{itemize}
-  \item{Differing versions of libraries and software dependences}
+  \item{Differing versions of libraries and software dependencies}
   \item{Condition of the network on which the application relies}
   \item{Operating system states, which can vary}
     \begin{itemize}
@@ -55,11 +54,11 @@
 
 
 \begin{frame}{Environmental Variations Can Reveal Bugs!}
+  An application may fail if:
   \begin{itemize}
-  \item{An application may fail if a file it needs is missing}
-  \item{An application may fail if it can not handle unusual filesystem configurations}
-  \item{An application may fail if it does not handle possible network
-      performance issues}
+  \item{A file it needs is missing}
+  \item{It can not handle unusual filesystem configurations}
+  \item{It does not handle possible network performance issues}
 
     % \item{Weird environmental conditions may be uncommon so developers do not
     %   know that they need to handle them!}
@@ -71,7 +70,7 @@
 \end{frame}
 
 
-\begin{frame}{The Typical Deployment Scenario}
+\begin{frame}{The Typical Deployment Scenario For A New (Build of) an Application}
   \begin{itemize}
   \item{Applications are tested under ideal conditions}
   \item{Bugs do not present themselves until an application has
@@ -103,13 +102,13 @@
   \item{The idiosyncrasies in results of these system calls represent (and
       result from) unusual environmental conditions}
   \item{e.g. Poor network performance may involve network-related system
-      calls timing out, filesystem issues may result in filesystem-related system
-      calls failing or returning weird results}
+      calls timing out; filesystem issues may result in filesystem-related system
+      calls failing or returning unexpected results}
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{Steps Required to Implement CrashSimulator's Technique}
+\begin{frame}{Steps Required to Implement CrashSimulator}
   \begin{itemize}
   \item{Record system call trace of application running in an anomalous
       environment}
@@ -185,9 +184,9 @@
           next system call}
       \item{Checking upcoming system call to ensure it matches the corresponding
           line from the trace being replayed}
-      \item{Restarting execution of the application thereby allowing it to
+      \item{Restarting execution of the application, thereby allowing it to
           actually make a real system call}
-      \item{Checking the results to ensure they too match the results from the
+      \item{Checking the results to ensure they, too, match the results from the
           corresponding line in the trace being replayed}
     \end{itemize}
   \end{itemize}
@@ -226,7 +225,7 @@
 
 \begin{frame}{Proof of Concept Implementation of CrashSimulator}
 
-  Implementation Components:
+  Implementation Building Blocks:
 
   \begin{itemize}
   \item{32-bit Linux}
@@ -347,10 +346,10 @@ Loss} & {\bf Fill Disk} \\
       to a malicious communication participant dragging communication out over a
       long period of time}
   \item{This process ties up resources and greatly lowers the effort required to
-      consume all available resources preventing legitimate access}
+      consume all available resources, preventing legitimate access}
   \item{``Slowloris'' Denial of Service attack against http servers}
     \begin{itemize}
-    \item{involved keeping a connection open to a vulnerable server by
+    \item{involves keeping a connection open to a vulnerable server by
         introducing just-below-the-timeout delays between sending HTTP headers}
         \end{itemize}
   \item{MANY Python HTTP/HTTPS/web modules vulnerable}
@@ -377,7 +376,6 @@ Loss} & {\bf Fill Disk} \\
 
 
 \begin{frame}{Conclusions}
-Write a conclusion
 \end{frame}
      
 
