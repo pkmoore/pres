@@ -2,7 +2,6 @@
 \usepackage{pifont}
 \mode<presentation>{}
 \title{Identifying Environment Related Faults with CrashSimulator}
-\subtitle{The Subtitle}
 \author{Preston Moore}
 \begin{document}
 
@@ -19,17 +18,17 @@
     \begin{itemize}
     \item{On the inputs they are provided}
     \item{\textit{In the context of the environment where they are executed}}
+    \end{itemize}
     \item{Developers have become very good at testing applications by
         manipulating inputs}
       \begin{itemize}
         \item{But environments affect execution as well}
       \end{itemize}
-    \end{itemize}
   \end{itemize}
 \end{frame}
 
 
-\begin{frame}{What Does an Application's Environment Provide?}
+\begin{frame}{What Does an Environment Provide to an Application?}
   \begin{itemize}
   \item{An implicit input in the form of environment variables, file
       contents, and other data accessible by the application}
@@ -43,7 +42,7 @@
 
 \begin{frame}{Environments Differ on Many Levels}
   \begin{itemize}
-  \item{Differing versions of libraries and software dependencies}
+  \item{Versions of libraries and software dependencies}
   \item{Condition of the network on which the application relies}
   \item{Operating system states, which can vary}
     \begin{itemize}
@@ -65,12 +64,12 @@
       \end{itemize}
       Failure to deal with these conditions results in incorrect behavior --- i.e.\ bugs.
 
-      These bugs are hard to find because setting up different environments is
+      These bugs are hard to identify because setting up different environments is
       expensive.
 \end{frame}
 
 
-\begin{frame}{The Typical Deployment Scenario For A New (Build of) an Application}
+\begin{frame}{The Typical Deployment Scenario For A New Version of an Application}
   \begin{itemize}
   \item{Applications are tested under ideal conditions}
   \item{Bugs do not present themselves until an application has
@@ -208,7 +207,7 @@
 
 \begin{frame}{Assessing the Response of an Application}
   \begin{itemize}
-  \item{If an application changes its system call behavior the replay diverges,
+  \item{If an application changes its system call behavior, the replay diverges,
       i.e. execution no longer matches the trace}
   \item{This means the application may be trying to handle the anomalous behavior}
     \begin{itemize}
@@ -377,14 +376,14 @@ Loss} & {\bf Fill Disk} \\
 
 \begin{frame}{In Conclusion}
   \begin{itemize}
-  \item{An application's environment is an often-neglected source of bugs}
+  \item{An application's environment is an often-neglected cause of bugs}
   \item{These bugs are difficult to find pre-deployment because replicating
       unusual environments is expensive}
   \item{CrashSimulator provides a technique for simulating these unusual
-      environments in order to identify these bugs before deployment thereby
+      environments in order to identify bugs before deployment, thereby
       saving time and expense}
-  \item{CrashSimulator has proven able to find this environmental bugs in
-      popular applications and libraries}
+  \item{In tests, CrashSimulator has found these types of environmental bugs in
+      both popular applications and libraries}
   \end{itemize}
 \end{frame}
      
